@@ -1,4 +1,4 @@
-# -*- coding: cp949 -*-
+# -*- coding:utf-8 -*-
 from xmlmojip import *
 from http.client import HTTPConnection
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -6,54 +6,109 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 ##global
 conn = None
 #regKey = '73ee2bc65b*******8b927fc6cd79a97'
-regKey = 'T7rs9%2FSMZ%2FenBIt9p8vN%2FK4wzcjBuglvL7cmo%2BX33vJ2e9XaiSARnOCU1M166vB%2BaEoelvnGA05NvTboY%2Frh9g%3D%3D'
+regKey = 'VLBCqkxEh5fmYHkME8uHOAZpstdHOtfWLbBTasDsOudEwqF8fi2RQRQ8ywYqlADby70fOmyXKgA7u8JdQDrC8A%3D%3D'
 
-# ³×ÀÌ¹ö OpenAPI Á¢¼Ó Á¤º¸ information
+# ë„¤ì´ë²„ OpenAPI ì ‘ì† ì •ë³´ information
 #server = "openapi.naver.com"
 server = 'apis.data.go.kr'
 
-# smtp Á¤º¸
-host = "smtp.gmail.com" # Gmail SMTP ¼­¹ö ÁÖ¼Ò.
-port = "587"
 
 def userURIBuilder(server,**user):
     #str = "http://" + server + "/search" + "?"
     str = "http://" + server + "/1300000/mjbJiWon/list" + "?"
     for key in user.keys():
         str += key + "=" + user[key] + "&"
-    print(str)
+#    print(str)
+    return str
+
+
+def userURIBuilderB(server,**user):
+    #str = "http://" + server + "/search" + "?"
+    str = "http://" + server + "/1300000/MachumTG/list" + "?"
+    for key in user.keys():
+        str += key + "=" + user[key] + "&"
+#    print(str)
+    return str
+
+
+def userURIBuilderC(server,**user):
+    #str = "http://" + server + "/search" + "?"
+    str = "http://" + server + "/1300000/bistGongseok/list/bistGongseok/list" + "?"
+    for key in user.keys():
+        str += key + "=" + user[key] + "&"
+#    print(str)
     return str
 
 def connectOpenAPIServer():
     global conn, server
     conn = HTTPConnection(server)
         
-def getBookDataFromISBN(gsCd):
+def getBookDataFromISBN(Choice):
     global server, regKey, conn
     if conn == None :
         connectOpenAPIServer()
     #uri = userURIBuilder(server, key=regKey, query='%20', display="1", start="1", target="book_adv", d_isbn=isbn)
-    uri = userURIBuilder(server, serviceKey=regKey,numOfRows='10',pageSize='1',pageNo='1',startPage='1',output="xml")  # ´ÙÀ½ °Ë»ö URL
-    #ÇØ±º %ED%95%B4%EA%B5%B0 °ø±º  %EA%B3%B5%EA%B5%B0
+    uri = userURIBuilder(server, serviceKey=regKey,numOfRows='100',pageSize='1',pageNo=str(Choice),startPage='1',output="xml")  # ë‹¤ìŒ ê²€ìƒ‰ URL
+    #í•´êµ° %ED%95%B4%EA%B5%B0 ê³µêµ°  %EA%B3%B5%EA%B5%B0
     conn.request("GET",uri)
 
     req = conn.getresponse()
-    print (req.status)
+#    print (req.status)
     if int(req.status) == 200 :
-        print("Book data downloading complete!")
+#        print("Book data downloading complete!")
         return extractBookData(req.read())
-        #return print(req.read())
     else:
         print ("OpenAPI request has been failed!! please retry")
         return None
 
+
+def getBookDataFromISBNB(Choice):
+    global server, regKey, conn
+    if conn == None:
+        connectOpenAPIServer()
+    # uri = userURIBuilder(server, key=regKey, query='%20', display="1", start="1", target="book_adv", d_isbn=isbn)
+    uri = userURIBuilderB(server, serviceKey=regKey, numOfRows='100', pageSize='1', pageNo=str(Choice), startPage='1',output="xml")  # ë‹¤ìŒ ê²€ìƒ‰ URL
+    # http://apis.data.go.kr/1300000/MachumTG/list?serviceKey=VLBCqkxEh5fmYHkME8uHOAZpstdHOtfWLbBTasDsOudEwqF8fi2RQRQ8ywYqlADby70fOmyXKgA7u8JdQDrC8A%3D%3D&numOfRows=10&pageSize=10&pageNo=1&startPage=1
+    # í•´êµ° %ED%95%B4%EA%B5%B0 ê³µêµ°  %EA%B3%B5%EA%B5%B0
+    conn.request("GET", uri)
+
+    req = conn.getresponse()
+    #    print (req.status)
+    if int(req.status) == 200:
+        #        print("Book data downloading complete!")
+        return extractBookDataB(req.read())
+    else:
+        print("OpenAPI request has been failed!! please retry")
+        return None
+
+
+def getBookDataFromISBNC(Choice):
+    global server, regKey, conn
+    if conn == None:
+        connectOpenAPIServer()
+    # uri = userURIBuilder(server, key=regKey, query='%20', display="1", start="1", target="book_adv", d_isbn=isbn)
+    uri = userURIBuilderC(server, serviceKey=regKey, numOfRows='100', pageSize='1', pageNo=str(Choice), startPage='1',output="xml")  # ë‹¤ìŒ ê²€ìƒ‰ URL
+    # í•´êµ° %ED%95%B4%EA%B5%B0 ê³µêµ°  %EA%B3%B5%EA%B5%B0
+    conn.request("GET", uri)
+
+    req = conn.getresponse()
+    #    print (req.status)
+    if int(req.status) == 200:
+        #        print("Book data downloading complete!")
+        return extractBookDataC(req.read())
+    else:
+        print("OpenAPI request has been failed!! please retry")
+        return None
+
+
+
 def extractBookData(strXml):
     from xml.etree import ElementTree
     tree = ElementTree.fromstring(strXml)
-    print (strXml)
-    # Book ¿¤¸®¸ÕÆ®¸¦ °¡Á®¿É´Ï´Ù.
+#    print (strXml)
+    # Book ì—˜ë¦¬ë¨¼íŠ¸ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
     itemElements = tree.getiterator("item")  # return list type
-    print(itemElements)
+#    print(itemElements)
     for item in itemElements:
         gsteukgiNm = item.find("gsteukgiNm")
         gtcdNm1 = item.find("gtcdNm1")
@@ -61,54 +116,52 @@ def extractBookData(strXml):
         gubun = item.find("gubun")
         jgmyeonheoDg = item.find("jgmyeonheoDg")
         jjganjeopGbcd = item.find("jjganjeopGbcd")
-        print (gtcdNm1)
         if len(gtcdNm1.text) > 0 :
            AddBook({"gsteukgiNm":gsteukgiNm.text,"gtcdNm1":gtcdNm1.text,"gtcdNm2":gtcdNm2.text,"gubun":gubun.text,"jgmyeonheoDg":jgmyeonheoDg.text,"jjganjeopGbcd":jjganjeopGbcd.text})
 
-def sendMain():
-    global host, port
-    html = ""
-    title = str(input ('Title :'))
-    senderAddr = str(input ('sender email address :'))
-    recipientAddr = str(input ('recipient email address :'))
-    msgtext = str(input ('write message :'))
-    passwd = str(input (' input your password of gmail account :'))
-    msgtext = str(input ('Do you want to include book data (y/n):'))
-    if msgtext == 'y' :
-        keyword = str(input ('input keyword to search:'))
-        html = MakeHtmlDoc(SearchBookTitle(keyword))
-    
-    import mysmtplib
-    # MIMEMultipartÀÇ MIMEÀ» »ı¼ºÇÕ´Ï´Ù.
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
-    
-    #Message container¸¦ »ı¼ºÇÕ´Ï´Ù.
-    msg = MIMEMultipart('alternative')
 
-    #set message
-    msg['Subject'] = title
-    msg['From'] = senderAddr
-    msg['To'] = recipientAddr
-    
-    msgPart = MIMEText(msgtext, 'plain')
-    bookPart = MIMEText(html, 'html', _charset = 'UTF-8')
-    
-    # ¸Ş¼¼Áö¿¡ »ı¼ºÇÑ MIME ¹®¼­¸¦ Ã·ºÎÇÕ´Ï´Ù.
-    msg.attach(msgPart)
-    msg.attach(bookPart)
-    
-    print ("connect smtp server ... ")
-    s = mysmtplib.MySMTP(host,port)
-    #s.set_debuglevel(1)
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
-    s.login(senderAddr, passwd)    # ·Î±äÀ» ÇÕ´Ï´Ù. 
-    s.sendmail(senderAddr , [recipientAddr], msg.as_string())
-    s.close()
-    
-    print ("Mail sending complete!!!")
+def extractBookDataB(strXml):
+    from xml.etree import ElementTree
+    tree = ElementTree.fromstring(strXml)
+#    print (strXml)
+    # Book ì—˜ë¦¬ë¨¼íŠ¸ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+    itemElements = tree.getiterator("item")  # return list type
+#    print(itemElements)
+    for item in itemElements:
+        gsteukgiNm = item.find("gsteukgiNm")
+        gtcdNm1 = item.find("gtcdNm1")
+        gtcdNm2 = item.find("gtcdNm2")
+        mojipYy = item.find("mojipYy")
+        mojipTms = item.find("mojipTms")
+        ipyeongDt = item.find("ipyeongDt")
+        mojipPcnt = item.find("mojipPcnt")
+        jygs = item.find("jygs")
+
+        if len(gtcdNm1.text) > 0 :
+           AddBookB({"gsteukgiNm":gsteukgiNm.text,"gtcdNm1":gtcdNm1.text,"gtcdNm2":gtcdNm2.text,"mojipYy":mojipYy.text,"mojipTms":mojipTms.text,"ipyeongDt":ipyeongDt.text,"mojipPcnt":mojipPcnt.text,"jygs":jygs.text})
+
+
+def extractBookDataC(strXml):
+    from xml.etree import ElementTree
+    tree = ElementTree.fromstring(strXml)
+#    print (strXml)
+    # Book ì—˜ë¦¬ë¨¼íŠ¸ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+    itemElements = tree.getiterator("item")  # return list type
+#    print(itemElements)
+    for item in itemElements:
+        bmgigwanNm = item.find("bmgigwanNm")
+        ghjbcNm = item.find("ghjbcNm")
+        bjdsggjusoNm = item.find("bjdsggjusoNm")
+        gsbaejeongPcnt = item.find("gsbaejeongPcnt")
+        jhgyehoekPcnt = item.find("jhgyehoekPcnt")
+        rnum = item.find("rnum")
+        seonbalYn = item.find("seonbalYn")
+        shbmsojipDt = item.find("shbmsojipDt")
+        if len(ghjbcNm.text) > 0 :
+           AddBookC({"bmgigwanNm":bmgigwanNm.text,"ghjbcNm":ghjbcNm.text,"bjdsggjusoNm":bjdsggjusoNm.text,"gsbaejeongPcnt":gsbaejeongPcnt.text,"jhgyehoekPcnt":jhgyehoekPcnt.text,"rnum":rnum.text,"seonbalYn":seonbalYn.text,"shbmsojipDt":shbmsojipDt.text})
+
+
+
 
 class MyHandler(BaseHTTPRequestHandler):
     
@@ -120,14 +173,14 @@ class MyHandler(BaseHTTPRequestHandler):
         keyword, value = parts.query.split('=',1)
 
         if keyword == "gtcdNm2" :
-            html = MakeHtmlDoc(SearchBookTitle(value)) # keyword¿¡ ÇØ´çÇÏ´Â Ã¥À» °Ë»öÇØ¼­ HTML·Î ÀüÈ¯ÇÕ´Ï´Ù.
-            ##Çì´õ ºÎºĞÀ» ÀÛ¼º.
+            html = MakeHtmlDoc(SearchBookTitle(value)) # keywordì— í•´ë‹¹í•˜ëŠ” ì±…ì„ ê²€ìƒ‰í•´ì„œ HTMLë¡œ ì „í™˜í•©ë‹ˆë‹¤.
+            ##í—¤ë” ë¶€ë¶„ì„ ì‘ì„±.
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
-            self.wfile.write(html.encode('utf-8')) #  º»ºĞ( body ) ºÎºĞÀ» Ãâ·Â ÇÕ´Ï´Ù.
+            self.wfile.write(html.encode('utf-8')) #  ë³¸ë¶„( body ) ë¶€ë¶„ì„ ì¶œë ¥ í•©ë‹ˆë‹¤.
         else:
-            self.send_error(400,' bad requst : please check the your url') # Àß ¸øµÈ ¿äÃ»¶ó´Â ¿¡·¯¸¦ ÀÀ´äÇÑ´Ù.
+            self.send_error(400,' bad requst : please check the your url') # ì˜ ëª»ëœ ìš”ì²­ë¼ëŠ” ì—ëŸ¬ë¥¼ ì‘ë‹µí•œë‹¤.
         
 def startWebService():
     try:
@@ -137,7 +190,7 @@ def startWebService():
         
     except KeyboardInterrupt:
         print ("shutdown web server")
-        server.socket.close()  # server Á¾·áÇÕ´Ï´Ù.
+        server.socket.close()  # server ì¢…ë£Œí•©ë‹ˆë‹¤.
 
 def checkConnection():
     global conn

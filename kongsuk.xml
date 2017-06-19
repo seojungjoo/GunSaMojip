@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<items cnt="2">
+    <item bmgigwanNm = "kongsukGiGwan">
+        <ghjbcNm>KangWon</ghjbcNm>
+        <bjdsggjusoNm>SockCho</bjdsggjusoNm>
+        <gsbaejeongPcnt>7</gsbaejeongPcnt>
+        <jhgyehoekPcnt>7</jhgyehoekPcnt>
+        <rnum>21</rnum>
+        <seonbalYn>Y</seonbalYn>
+        <shbmsojipDt>20140422</shbmsojipDt>
+    </item>
+    <item bmgigwanNm = "KongsukKyoYouk">
+        <ghjbcNm>KangWon</ghjbcNm>
+        <bjdsggjusoNm>SockCho</bjdsggjusoNm>
+        <gsbaejeongPcnt>7</gsbaejeongPcnt>
+        <jhgyehoekPcnt>7</jhgyehoekPcnt>
+        <rnum>21</rnum>
+        <seonbalYn>Y</seonbalYn>
+        <shbmsojipDt>20140422</shbmsojipDt>
+    </item>
+</items>
